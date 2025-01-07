@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.0-1.0.24"
 }
 
 android {
@@ -41,6 +42,22 @@ android {
 
 dependencies {
 
+    // Shark dependencies
+    implementation(files("../libs/ASAPJava.jar"))
+    implementation(files("../libs/SharkPeer.jar"))
+    implementation(files("../libs/SharkPKI.jar"))
+    implementation(files("../libs/SharkContracts.jar"))
+    implementation(files("../libs/ASAPAndroid.aar"))
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Dependencies for ASAPAndroid
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+
+    // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
