@@ -1,17 +1,12 @@
 package de.tadris.contracts.sample
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.tooling.preview.Preview
+import de.tadris.contracts.sample.ui.screens.MainScreen
+import de.tadris.contracts.sample.ui.screens.MainScreenViewModel
 import de.tadris.contracts.sample.ui.theme.SharkContractsSampleTheme
 import net.sharksystem.SharkPeerFS
 import net.sharksystem.asap.android.Util
@@ -19,6 +14,8 @@ import net.sharksystem.asap.android.apps.ASAPActivity
 import net.sharksystem.asap.android.apps.ASAPAndroidPeer
 import net.sharksystem.contracts.SharkContracts
 import net.sharksystem.contracts.SharkContractsFactory
+import net.sharksystem.contracts.content.ContractContents
+import net.sharksystem.contracts.content.ContractContentsFactory
 import net.sharksystem.contracts.storage.TemporaryInMemoryStorage
 import net.sharksystem.pki.SharkPKIComponent
 import net.sharksystem.pki.SharkPKIComponentFactory
@@ -28,6 +25,7 @@ import kotlin.random.Random
 class MainActivity : ASAPActivity() {
 
     private lateinit var contracts: SharkContracts
+    private lateinit var contents: ContractContents
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initApplication()
@@ -36,19 +34,17 @@ class MainActivity : ASAPActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        val viewModel: MainScreenViewModel by viewModels()
         findViewById<ComposeView>(R.id.composeRoot).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 SharkContractsSampleTheme {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        Greeting(
-                            name = "Android",
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
+                    MainScreen(viewModel)
                 }
             }
         }
+
+        viewModel.updateState(contracts, contents)
     }
 
     private fun initApplication(){
@@ -67,6 +63,10 @@ class MainActivity : ASAPActivity() {
         peer.addComponent(contractsFactory, SharkContracts::class.java)
         this.contracts = peer.getComponent(SharkContracts::class.java) as SharkContracts
 
+        // Add content
+        peer.addComponent(ContractContentsFactory(), ContractContents::class.java)
+        this.contents = peer.getComponent(ContractContents::class.java) as ContractContents
+
         // Launch
         ASAPAndroidPeer.initializePeer(name, peer.supportedFormats, "sampleApplication", this)
         val asapPeer = ASAPAndroidPeer.startPeer(this)
@@ -82,20 +82,4 @@ class MainActivity : ASAPActivity() {
         stopBluetooth()
     }
 
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SharkContractsSampleTheme {
-        Greeting("Android")
-    }
 }
