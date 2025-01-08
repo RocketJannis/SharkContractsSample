@@ -5,8 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import de.tadris.contracts.sample.ui.screens.MainScreen
 import de.tadris.contracts.sample.ui.screens.MainScreenViewModel
+import de.tadris.contracts.sample.ui.screens.SampleAppNavigation
 import de.tadris.contracts.sample.ui.theme.SharkContractsSampleTheme
 import net.sharksystem.SharkPeerFS
 import net.sharksystem.asap.android.Util
@@ -14,9 +14,11 @@ import net.sharksystem.asap.android.apps.ASAPActivity
 import net.sharksystem.asap.android.apps.ASAPAndroidPeer
 import net.sharksystem.contracts.SharkContracts
 import net.sharksystem.contracts.SharkContractsFactory
+import net.sharksystem.contracts.content.ContractContent
 import net.sharksystem.contracts.content.ContractContents
 import net.sharksystem.contracts.content.ContractContentsFactory
 import net.sharksystem.contracts.storage.TemporaryInMemoryStorage
+import net.sharksystem.contracts.content.TextContent
 import net.sharksystem.pki.SharkPKIComponent
 import net.sharksystem.pki.SharkPKIComponentFactory
 import kotlin.random.Random
@@ -26,6 +28,7 @@ class MainActivity : ASAPActivity() {
 
     private lateinit var contracts: SharkContracts
     private lateinit var contents: ContractContents
+    private lateinit var viewModel: MainScreenViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initApplication()
@@ -35,15 +38,27 @@ class MainActivity : ASAPActivity() {
         setContentView(R.layout.activity_main)
 
         val viewModel: MainScreenViewModel by viewModels()
+        this.viewModel = viewModel
         findViewById<ComposeView>(R.id.composeRoot).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 SharkContractsSampleTheme {
-                    MainScreen(viewModel)
+                    SampleAppNavigation(viewModel, this@MainActivity::createContract)
                 }
             }
         }
 
+        updateContentState()
+    }
+
+    private fun createContract(content: ContractContent){
+        val packed = contents.pack(content)
+        contracts.createContract(packed, emptyList(), false) // TODO change default values
+
+        updateContentState()
+    }
+
+    private fun updateContentState(){
         viewModel.updateState(contracts, contents)
     }
 
@@ -66,6 +81,9 @@ class MainActivity : ASAPActivity() {
         // Add content
         peer.addComponent(ContractContentsFactory(), ContractContents::class.java)
         this.contents = peer.getComponent(ContractContents::class.java) as ContractContents
+
+        // Add supported content
+        contents.registerType("text", TextContent::class.java)
 
         // Launch
         ASAPAndroidPeer.initializePeer(name, peer.supportedFormats, "sampleApplication", this)

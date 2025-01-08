@@ -3,4 +3,8 @@
     <string name="contract_author">#%s by %s</string>
     <string name="contract_content_unknown">Unknown content</string>
     <string name="action_add_contract">Add contract</string>
+    <string name="action_back">Back</string>
+    <string name="contract_title">Title</string>
+    <string name="contract_text">Text</string>
+    <string name="action_create">Create</string>
 </resources>

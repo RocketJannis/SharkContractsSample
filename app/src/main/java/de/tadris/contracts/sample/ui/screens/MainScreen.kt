@@ -33,30 +33,7 @@ fun MainScreen(viewModel: MainScreenViewModel){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenContent(onNewContractClicked: () -> Unit, state: MainScreenState){
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text(text = stringResource(R.string.app_name))
-                },
-                actions = {
-                    IconButton(onClick = onNewContractClicked) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.action_add_contract)
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        ContractList(state.contractData)
-    }
+    ContractList(state.contractData)
 }
 
 @Preview

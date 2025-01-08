@@ -9,6 +9,7 @@ import net.sharksystem.contracts.Contract
 import net.sharksystem.contracts.ContractSignature
 import net.sharksystem.contracts.SharkContracts
 import net.sharksystem.contracts.content.ContentPackage
+import net.sharksystem.contracts.content.ContractContent
 import net.sharksystem.contracts.content.ContractContents
 
 data class MainScreenState(val contractData: List<ContractInfo>)

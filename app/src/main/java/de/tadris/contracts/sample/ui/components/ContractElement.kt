@@ -25,7 +25,7 @@ fun ContractElement(info: ContractInfo){
     val contract = info.contract
 
     Column(modifier = Modifier.padding(spacingMin)) {
-        Text(text = stringResource(R.string.contract_author, contract.hash.take(12), contract.authorId) + " (" + info.state.toString() + ")")
+        Text(text = stringResource(R.string.contract_author, contract.hash.take(6), contract.authorId) + " (" + info.state.toString() + ")")
         if(info.content != null){
             ContentElement(info.content)
         }else{
