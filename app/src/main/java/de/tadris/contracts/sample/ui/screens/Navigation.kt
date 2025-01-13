@@ -1,13 +1,19 @@
 package de.tadris.contracts.sample.ui.screens
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,11 +50,13 @@ fun SampleAppNavigation(viewModel: MainScreenViewModel, createContract: (Contrac
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            when(currentScreen){
-                Screen.MAIN -> MainScreen(viewModel)
-                Screen.ADD_CONTRACT -> AddContractScreen {
-                    currentScreen = Screen.MAIN
-                    createContract(it)
+            Crossfade(currentScreen, animationSpec = tween(300), label = "Content crossfade") { displayedScreen ->
+                when(displayedScreen){
+                    Screen.MAIN -> MainScreen(viewModel)
+                    Screen.ADD_CONTRACT -> AddContractScreen {
+                        currentScreen = Screen.MAIN
+                        createContract(it)
+                    }
                 }
             }
         }
@@ -64,10 +72,12 @@ private fun SampleAppBar(currentScreen: Screen, navigate: (Screen) -> Unit){
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            Text(text = stringResource(R.string.app_name))
+            Crossfade(currentScreen, label = "Title") {
+                Text(text = stringResource(it.titleRes))
+            }
         },
         actions = {
-            if(currentScreen == Screen.MAIN){
+            AnimatedVisibility(currentScreen == Screen.MAIN) {
                 IconButton(onClick = { navigate(Screen.ADD_CONTRACT) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -77,8 +87,12 @@ private fun SampleAppBar(currentScreen: Screen, navigate: (Screen) -> Unit){
             }
         },
         navigationIcon = {
-            if(currentScreen != Screen.MAIN){
-                IconButton(onClick = { navigate(Screen.ADD_CONTRACT) }) {
+            AnimatedVisibility(
+                visible = currentScreen != Screen.MAIN,
+                enter = fadeIn() + expandHorizontally(),
+                exit = shrinkHorizontally() + fadeOut(),
+            ) {
+                IconButton(onClick = { navigate(Screen.MAIN) }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.action_back)
