@@ -1,9 +1,11 @@
 package de.tadris.contracts.sample.ui.persistence
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 
+@Dao
 interface ContractDao {
 
     @Insert
@@ -19,6 +21,7 @@ interface ContractDao {
     @Query("SELECT * from contract")
     fun findAllContracts(): List<ContractWithParties>
 
+    @Transaction
     @Query("SELECT * from contract where hash=:hash")
     fun findContract(hash: String): ContractWithParties?
 

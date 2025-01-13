@@ -26,9 +26,12 @@ import kotlin.random.Random
 
 class MainActivity : ASAPActivity() {
 
+    private val LOCK = Any()
+    private lateinit var db: AppDatabase
     private lateinit var contracts: SharkContracts
     private lateinit var contents: ContractContents
     private lateinit var viewModel: MainScreenViewModel
+    private lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initApplication()
@@ -63,10 +66,18 @@ class MainActivity : ASAPActivity() {
     }
 
     private fun initApplication(){
-        val name = "anonymous-" + Random.nextInt(10000)
+        settings = Settings(this)
+        if(settings.ownerName.isEmpty()){
+            settings.ownerName = "anonymous-" + Random.nextInt(10000)
+        }
+        val name = settings.ownerName
         val rootDir = Util.getASAPRootDirectory(this, "asap", name)
         val peer = SharkPeerFS(name, rootDir.absolutePath)
 
+        // Init DB
+        db = Room.databaseBuilder(this, AppDatabase::class.java, "app-database.db")
+            .allowMainThreadQueries()
+            .build()
 
         // Add PKI
         val certificateComponentFactory = SharkPKIComponentFactory()
