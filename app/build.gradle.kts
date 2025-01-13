@@ -44,6 +44,7 @@ dependencies {
 
     // Shark dependencies
     implementation(files("../libs/ASAPJava.jar"))
+    implementation(files("../libs/ASAPHub.jar"))
     implementation(files("../libs/SharkPeer.jar"))
     implementation(files("../libs/SharkPKI.jar"))
     implementation(files("../libs/SharkContracts.jar"))

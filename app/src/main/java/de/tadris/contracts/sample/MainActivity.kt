@@ -1,26 +1,38 @@
 package de.tadris.contracts.sample
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.room.Room
+import de.tadris.contracts.sample.persistence.Settings
+import de.tadris.contracts.sample.ui.persistence.AppDatabase
+import de.tadris.contracts.sample.ui.persistence.RoomContractStorage
 import de.tadris.contracts.sample.ui.screens.MainScreenViewModel
 import de.tadris.contracts.sample.ui.screens.SampleAppNavigation
 import de.tadris.contracts.sample.ui.theme.SharkContractsSampleTheme
 import net.sharksystem.SharkPeerFS
+import net.sharksystem.asap.ASAPSecurityException
 import net.sharksystem.asap.android.Util
 import net.sharksystem.asap.android.apps.ASAPActivity
 import net.sharksystem.asap.android.apps.ASAPAndroidPeer
+import net.sharksystem.contracts.Contract
+import net.sharksystem.contracts.ContractSignature
+import net.sharksystem.contracts.ContractsListener
 import net.sharksystem.contracts.SharkContracts
 import net.sharksystem.contracts.SharkContractsFactory
 import net.sharksystem.contracts.content.ContractContent
 import net.sharksystem.contracts.content.ContractContents
 import net.sharksystem.contracts.content.ContractContentsFactory
-import net.sharksystem.contracts.storage.TemporaryInMemoryStorage
 import net.sharksystem.contracts.content.TextContent
+import net.sharksystem.contracts.storage.TemporaryInMemoryStorage
+import net.sharksystem.hub.peerside.TCPHubConnectorDescriptionImpl
+import net.sharksystem.pki.CredentialMessage
 import net.sharksystem.pki.SharkPKIComponent
 import net.sharksystem.pki.SharkPKIComponentFactory
+import java.io.IOException
 import kotlin.random.Random
 
 
@@ -85,9 +97,10 @@ class MainActivity : ASAPActivity() {
         val pki = peer.getComponent(SharkPKIComponent::class.java) as SharkPKIComponent
 
         // Add contracts
-        val contractsFactory = SharkContractsFactory(pki, TemporaryInMemoryStorage())
+        val contractsFactory = SharkContractsFactory(pki, RoomContractStorage(db.contractDao()))
         peer.addComponent(contractsFactory, SharkContracts::class.java)
         this.contracts = peer.getComponent(SharkContracts::class.java) as SharkContracts
+        contracts.registerListener(this)
 
         // Add content
         peer.addComponent(ContractContentsFactory(), ContractContents::class.java)
@@ -104,6 +117,27 @@ class MainActivity : ASAPActivity() {
         startBluetooth()
         startBluetoothDiscoverable()
         startBluetoothDiscovery()
+        // auto accept credentials in this example
+        pki.setSharkCredentialReceivedListener { credentialMessage: CredentialMessage ->
+            synchronized(LOCK){
+                println("MainActivity - RECEIVED CREDENTIALS: $credentialMessage")
+                try {
+                    pki.acceptAndSignCredential(credentialMessage)
+                } catch (e: Exception){
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        Handler().postDelayed({
+            startBluetooth()
+            startBluetoothDiscoverable()
+            startBluetoothDiscovery()
+
+            val hub = TCPHubConnectorDescriptionImpl("relite.fritz.box", 6907, true)
+            peer.addHubDescription(hub)
+            hubConnectionManager.connectHub(hub)
+        }, 3000)
     }
 
     override fun onDestroy() {
