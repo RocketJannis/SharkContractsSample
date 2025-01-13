@@ -36,7 +36,7 @@ import java.io.IOException
 import kotlin.random.Random
 
 
-class MainActivity : ASAPActivity() {
+class MainActivity : ASAPActivity(), ContractsListener {
 
     private val LOCK = Any()
     private lateinit var db: AppDatabase
@@ -110,13 +110,12 @@ class MainActivity : ASAPActivity() {
         contents.registerType("text", TextContent::class.java)
 
         // Launch
-        ASAPAndroidPeer.initializePeer(name, peer.supportedFormats, "sampleApplication", this)
-        val asapPeer = ASAPAndroidPeer.startPeer(this)
-        peer.start(asapPeer)
+        ASAPAndroidPeer.initializePeer(name, peer.formats, "sampleApplication", this)
+        peer.start(ASAPAndroidPeer.startPeer(this))
 
-        startBluetooth()
-        startBluetoothDiscoverable()
-        startBluetoothDiscovery()
+        // automatically exchange credentials
+        pki.setBehaviour(SharkPKIComponent.BEHAVIOUR_SEND_CREDENTIAL_FIRST_ENCOUNTER, true)
+
         // auto accept credentials in this example
         pki.setSharkCredentialReceivedListener { credentialMessage: CredentialMessage ->
             synchronized(LOCK){
@@ -143,6 +142,14 @@ class MainActivity : ASAPActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopBluetooth()
+    }
+
+    override fun onContractReceived(contract: Contract) {
+        updateContentState()
+    }
+
+    override fun onSignatureReceived(signature: ContractSignature) {
+        updateContentState()
     }
 
 }
