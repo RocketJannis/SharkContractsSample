@@ -13,9 +13,8 @@
         android:theme="@style/Theme.SharkContractsSample"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".LauncherActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.SharkContractsSample">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.SharkContractsSample" />
     </application>
 
 </manifest>
