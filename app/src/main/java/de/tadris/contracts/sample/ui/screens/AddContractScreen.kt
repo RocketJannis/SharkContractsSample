@@ -68,10 +68,12 @@ fun AddContractScreen(viewModel: MainViewModel, onContentChoose: (ContractBuildD
                 parties = parties + listOf(it)
             }
         )
-        EncryptedCheckbox (
-            state = encrypted,
-            onStateChange = { encrypted = it },
-        )
+        if(parties.isNotEmpty()){
+            EncryptedCheckbox (
+                state = encrypted,
+                onStateChange = { encrypted = it },
+            )
+        }
         TextField(
             value = title,
             onValueChange = { title = it },
@@ -90,7 +92,7 @@ fun AddContractScreen(viewModel: MainViewModel, onContentChoose: (ContractBuildD
             onClick = { onContentChoose(ContractBuildData(
                 parties,
                 TextContent(title, text),
-                encrypted
+                encrypted && parties.isNotEmpty()
             )) },
             modifier = Modifier.align(Alignment.End),
         ) {

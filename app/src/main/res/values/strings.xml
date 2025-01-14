@@ -10,4 +10,7 @@
     <string name="action_sign">Sign</string>
     <string name="contract_party_add_title">Add contract party</string>
     <string name="contract_create_encrypted">Encrypt content (E2E)</string>
+    <string name="choose_name">Choose a name</string>
+    <string name="choose_name_hint">This name must be unique, otherwise you won\'t be able to communicate with others. It will be visible to others.</string>
+    <string name="action_submit">Submit</string>
 </resources>

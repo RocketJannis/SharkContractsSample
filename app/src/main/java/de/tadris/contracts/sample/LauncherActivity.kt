@@ -1,12 +1,19 @@
 package de.tadris.contracts.sample
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
+import de.tadris.contracts.sample.persistence.Settings
+import de.tadris.contracts.sample.ui.screens.LauncherScreen
+import de.tadris.contracts.sample.ui.theme.SharkContractsSampleTheme
 
-class LauncherActivity : Activity() {
+class LauncherActivity : AppCompatActivity() {
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 100
@@ -26,20 +33,38 @@ class LauncherActivity : Activity() {
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
     )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_main)
+
+        findViewById<ComposeView>(R.id.composeRoot).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                SharkContractsSampleTheme {
+                    LauncherScreen(this@LauncherActivity::chooseName)
+                }
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        if(findNotGrantedPermissions().isEmpty()){
-            startApplication()
-        }else{
+        if(findNotGrantedPermissions().isNotEmpty()){
             requestPermissions(findNotGrantedPermissions().toTypedArray(), PERMISSION_REQUEST_CODE)
+        }else if(Settings(this).ownerName.isNotEmpty()){
+            startApplication()
         }
+    }
+
+    private fun chooseName(name: String){
+        Settings(this).ownerName = name // save name
+        startApplication()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == PERMISSION_REQUEST_CODE){
-            if(resultCode == PackageManager.PERMISSION_GRANTED){
-                startApplication()
-            }else{
+            if (resultCode != PackageManager.PERMISSION_GRANTED) {
                 finish()
             }
         }else{
