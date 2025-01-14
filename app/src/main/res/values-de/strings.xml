@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SharkContractsSample</string>
+    <string name="contract_content_unknown">Unbekannter Inhalt</string>
+    <string name="action_add_contract">Vertrag hinzufügen</string>
+    <string name="action_back">Zurück</string>
+    <string name="contract_title">Titel</string>
+    <string name="contract_text">Text</string>
+    <string name="action_create">Erstellen</string>
+    <string name="action_remove">Entfernen</string>
+    <string name="action_sign">Unterschreiben</string>
+    <string name="contract_party_add_title">Vertragspartei hinzufügen</string>
+    <string name="contract_create_encrypted">Inhalt verschlüssel (E2E)</string>
+    <string name="choose_name">Namen wählen</string>
+    <string name="choose_name_hint">Dieser Name muss einzigartig sein. Ansonsten kannst du nicht mit anderen kommunizieren. Der Name wird für andere sichtbar sein.</string>
+    <string name="action_submit">Fertig</string>
+</resources>
