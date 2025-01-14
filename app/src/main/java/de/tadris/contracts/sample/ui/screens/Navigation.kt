@@ -30,7 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import de.tadris.contracts.sample.R
-import net.sharksystem.contracts.content.ContractContent
+import net.sharksystem.contracts.Contract
 
 enum class Screen(@StringRes val titleRes: Int) {
     MAIN(R.string.app_name),
@@ -38,7 +38,11 @@ enum class Screen(@StringRes val titleRes: Int) {
 }
 
 @Composable
-fun SampleAppNavigation(viewModel: MainScreenViewModel, createContract: (ContractContent) -> Unit){
+fun SampleAppNavigation(
+    viewModel: MainViewModel,
+    createContract: (ContractBuildData) -> Unit,
+    onSign: (Contract) -> Unit
+){
     var currentScreen by rememberSaveable { mutableStateOf(Screen.MAIN) }
 
     Scaffold(
@@ -52,8 +56,8 @@ fun SampleAppNavigation(viewModel: MainScreenViewModel, createContract: (Contrac
         Box(modifier = Modifier.padding(innerPadding)) {
             Crossfade(currentScreen, animationSpec = tween(300), label = "Content crossfade") { displayedScreen ->
                 when(displayedScreen){
-                    Screen.MAIN -> MainScreen(viewModel)
-                    Screen.ADD_CONTRACT -> AddContractScreen {
+                    Screen.MAIN -> MainScreen(viewModel, onSign = onSign)
+                    Screen.ADD_CONTRACT -> AddContractScreen(viewModel) {
                         currentScreen = Screen.MAIN
                         createContract(it)
                     }

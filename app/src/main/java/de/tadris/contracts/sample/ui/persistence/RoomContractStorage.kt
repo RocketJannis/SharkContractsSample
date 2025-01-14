@@ -12,13 +12,13 @@ class RoomContractStorage(private val dao: ContractDao) : ContractStorage {
             StoredContract(contract.hash, contract.authorId, contract.content, contract.isEncrypted, contract.signature)
         )
         contract.otherParties.forEach { party ->
-            dao.insertParty(StoredContractParty(-1, contract.hash, party.id, party.encryptedKey))
+            dao.insertParty(StoredContractParty(0, contract.hash, party.id, party.encryptedKey))
         }
     }
 
     override fun insertSignature(signature: ContractSignature) {
         dao.insertSignature(
-            StoredSignature(-1, signature.contractHash, signature.author, signature.signature)
+            StoredSignature(0, signature.contractHash, signature.author, signature.signature)
         )
     }
 

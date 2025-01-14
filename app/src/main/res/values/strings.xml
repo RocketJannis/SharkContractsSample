@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">SharkContractsSample</string>
-    <string name="contract_author">#%s by %s</string>
     <string name="contract_content_unknown">Unknown content</string>
     <string name="action_add_contract">Add contract</string>
     <string name="action_back">Back</string>
     <string name="contract_title">Title</string>
     <string name="contract_text">Text</string>
     <string name="action_create">Create</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_sign">Sign</string>
+    <string name="contract_party_add_title">Add contract party</string>
+    <string name="contract_create_encrypted">Encrypt content (E2E)</string>
 </resources>
