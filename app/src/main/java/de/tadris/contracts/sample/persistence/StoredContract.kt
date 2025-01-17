@@ -1,4 +1,4 @@
-package de.tadris.contracts.sample.ui.persistence
+package de.tadris.contracts.sample.persistence
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

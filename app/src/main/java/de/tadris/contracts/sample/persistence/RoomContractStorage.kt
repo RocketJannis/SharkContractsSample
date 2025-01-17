@@ -1,4 +1,4 @@
-package de.tadris.contracts.sample.ui.persistence
+package de.tadris.contracts.sample.persistence
 
 import net.sharksystem.contracts.Contract
 import net.sharksystem.contracts.ContractParty

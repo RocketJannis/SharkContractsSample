@@ -9,8 +9,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.room.Room
 import de.tadris.contracts.sample.persistence.Settings
-import de.tadris.contracts.sample.ui.persistence.AppDatabase
-import de.tadris.contracts.sample.ui.persistence.RoomContractStorage
+import de.tadris.contracts.sample.persistence.AppDatabase
+import de.tadris.contracts.sample.persistence.RoomContractStorage
 import de.tadris.contracts.sample.ui.screens.ContractBuildData
 import de.tadris.contracts.sample.ui.screens.MainViewModel
 import de.tadris.contracts.sample.ui.screens.SampleAppNavigation

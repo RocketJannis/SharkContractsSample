@@ -1,13 +1,13 @@
-package de.tadris.contracts.sample.ui.persistence
+package de.tadris.contracts.sample.persistence
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "signature")
-data class StoredSignature(
+@Entity(tableName = "contract_party")
+data class StoredContractParty(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "contract_hash") val contractHash: String,
-    val author: String,
-    val signature: ByteArray,
+    val name: String,
+    @ColumnInfo(name = "encrypted_key") val encryptedKey: ByteArray,
 )
